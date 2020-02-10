@@ -1,0 +1,1 @@
+This git repository contains tools to compute Single Transverse Kinematic Variables (STVs). Given the output files of different Neutrino Event Generators (GENIE, NuWro, GiBUU, NEUT), the STVs can be calculated with the compute_stv_*.C scripts. The respective STV distributions are then plotted using make_plots.C.  
