@@ -85,7 +85,7 @@ void compute_stv_GiBUU(	const std::string& input_file_name,
 
 
   // Kinematic variables
-  double	mc_truth_mu_mom, mc_truth_mu_phi, mc_truth_mu_theta, mc_truth_mu_costheta, 
+  double	mc_truth_mu_mom, mc_truth_mu_phi, mc_truth_mu_theta, mc_truth_mu_costheta,
  		mc_truth_leading_p_mom, mc_truth_leading_p_phi, mc_truth_leading_p_theta, mc_truth_leading_p_costheta,
                 mc_truth_2nd_leading_p_mom, mc_truth_2nd_leading_p_phi, mc_truth_2nd_leading_p_theta, mc_truth_2nd_leading_p_costheta,
                 mc_truth_leading_pi_mom, mc_truth_leading_pi_phi, mc_truth_leading_pi_theta, mc_truth_leading_pi_costheta,
@@ -177,6 +177,8 @@ void compute_stv_GiBUU(	const std::string& input_file_name,
   // STVs ok?
   out_tree->Branch("STVs_ok", &STVs_ok, "STVs_ok/O");
 
+  // Event "perweight"
+  out_tree->Branch("weight", &weight, "weight/D");
 
   // Loop over events
 //  for (int e = 0; e < ntuple->GetEntries() - ntuple->GetEntries() + 100000; ++e) {
@@ -191,7 +193,7 @@ void compute_stv_GiBUU(	const std::string& input_file_name,
     ntuple->GetEntry(e);
 
     // Find indices of leading final state protons, pions and neutrons
-    int index_leading_N = 0; // Momentum leading proton 
+    int index_leading_N = 0; // Momentum leading proton
     int index_leading_N2 = BOGUS; // Momentum 2nd leading proton
     int index_leading_pi = 0; // Index pion
     int index_leading_n = 0; // Index neutron
@@ -290,7 +292,7 @@ void compute_stv_GiBUU(	const std::string& input_file_name,
 
         if ( new_pN_mag_p > THRESHOLD_P_PROTON && new_pN_mag_p < pN_mag_p && new_pN_mag_p > pN_mag_p2 ) {
           pN_mag_p2 = new_pN_mag_p; // first save second to leading proton momentum...
-          index_leading_N2 = f; // ...and second to leading proton index          
+          index_leading_N2 = f; // ...and second to leading proton index
         }
 
         cout << "Track belongs to a proton (" << barcode->at(f) << ")" << endl;
@@ -321,7 +323,7 @@ void compute_stv_GiBUU(	const std::string& input_file_name,
 //	double costheta_pi = pNz / std::sqrt( pNx*pNx + pNy*pNy + pNz*pNz );
 
 	// Check threshold on energy, momentum and/or angle
-//	if ( KE > THRESHOLD_KE_PION ) { 
+//	if ( KE > THRESHOLD_KE_PION ) {
         if ( new_pN_mag_pi > THRESHOLD_P_PION ) {
 //      if ( pN_mag_pi > THRESHOLD_P_PION && costheta_pi > THRESHOLD_COSTHETA_PION ) {
 	  ++nf_pi_above_threshold; // THRESHOLD_P_PION currently set to 0. GeV
@@ -356,7 +358,7 @@ void compute_stv_GiBUU(	const std::string& input_file_name,
 //      double costheta_n = pNz / std::sqrt( pNx*pNx + pNy*pNy + pNz*pNz );
 
         // Check threshold on energy, momentum and/or angle
-//	if ( KE > THRESHOLD_KE_NEUTRON ) { 
+//	if ( KE > THRESHOLD_KE_NEUTRON ) {
         if ( new_pN_mag_n > THRESHOLD_P_NEUTRON ) {
 //      if ( pN_mag_n > THRESHOLD_P_NEUTRON && costheta_n > THRESHOLD_COSTHETA_NEUTRON ) {
 	  ++nf_neutrons; // THRESHOLD_P_NEUTRON currently set to 0. GeV
@@ -399,7 +401,7 @@ void compute_stv_GiBUU(	const std::string& input_file_name,
     mc_truth_leading_p_phi = std::atan2( pN_lead_y, pN_lead_x );
     mc_truth_leading_p_costheta = pN_lead_z / std::sqrt( mc_truth_leading_p_mom );
     mc_truth_leading_p_theta = std::acos( mc_truth_leading_p_costheta );
-    
+
     // 2nd momentum leading proton momentum components
     double pN_lead_x2, pN_lead_y2, pN_lead_z2;
 
@@ -490,7 +492,7 @@ void compute_stv_GiBUU(	const std::string& input_file_name,
         pTx_np += Px->at( index_N_multi_proton[i] );
         pTy_np += Py->at( index_N_multi_proton[i] );
       }
-    }  
+    }
 
     // Pions
     if ( nf_pi_above_threshold >= 1 ) {
@@ -505,7 +507,7 @@ void compute_stv_GiBUU(	const std::string& input_file_name,
     // Neutrons
     if ( nf_neutrons >= 1 ) {
       for ( int j = 0; j < nf_neutrons ; ++j) {
-    
+
         // Add all final (above threshold) neutrons momenta
         pTx_nn += Px->at( index_N_multi_neutron[j] );
         pTy_nn += Py->at( index_N_multi_neutron[j] );
@@ -549,7 +551,7 @@ void compute_stv_GiBUU(	const std::string& input_file_name,
     pTmag_nN = std::sqrt( pTx_nN*pTx_nN + pTy_nN*pTy_nN );
 
 
-    // STK 4-momentum-imbalance delta p (see arXiv:1805.05486) 
+    // STK 4-momentum-imbalance delta p (see arXiv:1805.05486)
     // There are two ways of calculating delta p: 1) when neutrino energy E_nu is known and 2) when it is unknown
     // 1)
 

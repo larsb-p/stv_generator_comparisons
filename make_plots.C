@@ -60,6 +60,12 @@ constexpr double MICROBOONE_FIDUCIAL_MASS = 60e6; // grams
 constexpr double ATOMIC_MASS_NATURAL_ARGON = 6.6335209e-23; // grams
 constexpr double NUM_TARGETS = MICROBOONE_FIDUCIAL_MASS / ATOMIC_MASS_NATURAL_ARGON;
 
+constexpr int A_TARGET = 40; // 40Ar mass number
+
+// Number of GiBUU runs used to make the samples
+// This is set by the job card parameter "num_runs_SameEnergy"
+constexpr int NUM_GIBUU_RUNS = 17;
+
 // Global cut that will be applied to all plots. For the 2D
 // sliced plots, the appropriate additions will be made to
 // this basic cut.
@@ -255,8 +261,7 @@ class STVPlotMaker {
 //      assert( fSTVTree );
 //      fSTVTree->AddFriend( fGSTTree );
 
-//      fTotalXSecAvg = 1.01987e-38;
-      fTotalXSecAvg = flux_averaged_total_xsec_GiBUU(*weight_hist);
+      fTotalXSecAvg = 1.; // GiBUU uses weighted events, so we don't need this factor
 
       TNamed* GiBUU_tune = nullptr;
       stv_tree_file.GetObject( "GiBUU_tune", GiBUU_tune );
@@ -377,6 +382,12 @@ class STVPlotMaker {
       legend_attr = "CC QE <FSIs on>";
       }
 
+      if ( generator == "GiBUU" ) {
+        // If we're working with GiBUU events (which are weighted), apply the appropriate
+        // weights to the output histograms by including a factor in the cut
+        CUT_TO_USE = "weight * (" + CUT_TO_USE + ')';
+      }
+
       cout << "Generator is " << generator << endl;
 //      cout << "Tune name is " << fGenieTuneName << endl;
       cout << "CUT_TO_USE is " << CUT_TO_USE << endl;
@@ -394,6 +405,15 @@ class STVPlotMaker {
       fPlotLegend = plot_legend;
 
       std::vector<TH1*> histograms = this->build_histograms();
+
+      // If we're working with GiBUU events, apply an extra scaling
+      // factor needed to correct the usual approach
+      if ( generator == "GiBUU" ) {
+        for ( auto* hist : histograms ) {
+          hist->Scale( A_TARGET * fNumEvents
+            / static_cast<double>( NUM_GIBUU_RUNS ) );
+        }
+      }
 
       cout << "cat_index is " << cat_index << endl;
       cat_index += 1;
