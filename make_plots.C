@@ -144,6 +144,8 @@ class STVPlotMaker {
       const std::string& stv_tree_filename, const std::string& gst_tree_filename,
       int plot_color, std::string& plot_legend)
     {
+      // By default, assume that we're using unweighted events
+      fUsingWeightedEvents = false;
 
       // Read my_plots_input_*.txt
       TFile flux_file( flux_filename.c_str(), "read" ); // Flux file
@@ -237,6 +239,9 @@ class STVPlotMaker {
 
       // GiBUU
       if ( generator == "GiBUU" ) {
+
+      // GiBUU uses weighted MC events
+      fUsingWeightedEvents = true;
 
       // Flux file
       TH1D* flux_hist = nullptr;
@@ -433,6 +438,7 @@ class STVPlotMaker {
     std::string fGenieTuneName;
     int fPlotColor;
     std::string fPlotLegend;
+    bool fUsingWeightedEvents;
 
     std::map<std::string, VarInfo> fVariableInfo;
 
@@ -528,26 +534,40 @@ class STVPlotMaker {
         // appropriate value from the binomial distribution.
         double old_bin_count = hist.GetBinContent( bin );
 
+        // MC statistical uncertainty on the old bin count
+        double error_old_bin_count = 0.;
+        if ( !fUsingWeightedEvents ) {
+          // Note: unweighted event bin counts follow a binomial distribution
+          error_old_bin_count = std::sqrt( (fNumEvents - old_bin_count)
+            * old_bin_count / fNumEvents );
+        }
+        else {
+          // We approximate the error on weighted event bin counts using a
+          // Poisson distribution. When histograms are filled with weighted
+          // events (and TH1::Sumw2() has been called), ROOT sets the bin error
+          // like this automatically. See
+          // https://www.pp.rhul.ac.uk/~cowan/stat/notes/weights.pdf
+          // TODO: revisit this, come up with a better estimator
+          error_old_bin_count = hist.GetBinError( bin );
+        }
+
         double new_bin_count, new_bin_error;
 
         if ( fPlotMode == STVPlotMode::CrossSections ) {
           new_bin_count = old_bin_count * fTotalXSecAvg
             / ( fNumEvents * x_width * y_width * z_width );
-          new_bin_error = fTotalXSecAvg * std::sqrt( (fNumEvents - old_bin_count)
-            * old_bin_count / fNumEvents ) / ( fNumEvents * x_width * y_width * z_width );
+          new_bin_error = fTotalXSecAvg * error_old_bin_count / ( fNumEvents * x_width * y_width * z_width );
         }
         else if ( fPlotMode == STVPlotMode::FiducialEvents ) {
           new_bin_count = old_bin_count * fTotalXSecAvg * fFluxIntegral * NUM_TARGETS / fNumEvents;
 
-          new_bin_error = std::sqrt( (fNumEvents - old_bin_count) * old_bin_count / fNumEvents )
-            * fTotalXSecAvg * fFluxIntegral * NUM_TARGETS / fNumEvents;
+          new_bin_error = error_old_bin_count * fTotalXSecAvg * fFluxIntegral * NUM_TARGETS / fNumEvents;
         }
         else {
           // fPlotMode == STVPlotMode::MCProbDensity
           new_bin_count = old_bin_count / ( fNumEvents * x_width * y_width * z_width );
 
-          new_bin_error = std::sqrt( (fNumEvents - old_bin_count) * old_bin_count / fNumEvents )
-            / ( fNumEvents * x_width * y_width * z_width );
+          new_bin_error = error_old_bin_count / ( fNumEvents * x_width * y_width * z_width );
         }
 
         hist.SetBinContent(bin, new_bin_count);
@@ -599,6 +619,10 @@ class STVPlotMaker {
         // Create the histogram
         TH1D* temp_hist = new TH1D(hist_name.c_str(), hist_title.c_str(), // with histo_title
           info.fNumBins, info.fAxisMin, info.fAxisMax);
+
+        // If we're using weighted events, then configure the histogram to
+        // compute bin errors by summing the squares of the weights.
+        if ( fUsingWeightedEvents ) temp_hist->Sumw2( true );
 
         this->fill_histogram( *temp_hist, var_name.c_str(), CUT_TO_USE.c_str() );
         hists.push_back( temp_hist );
