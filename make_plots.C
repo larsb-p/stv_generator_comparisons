@@ -64,7 +64,7 @@ constexpr int A_TARGET = 40; // 40Ar mass number
 
 // Number of GiBUU runs used to make the samples
 // This is set by the job card parameter "num_runs_SameEnergy"
-constexpr int NUM_GIBUU_RUNS = 17;
+constexpr int NUM_GIBUU_RUNS = 30;
 
 // Global cut that will be applied to all plots. For the 2D
 // sliced plots, the appropriate additions will be made to
@@ -84,7 +84,7 @@ std::string CUT_TO_USE;
 //const std::string PLOT_TITLE_PREFIX( "1#mu + Np" ); // turn on plot title later
 const std::string PLOT_TITLE_PREFIX( "" );
 
-constexpr int DEFAULT_NUM_BINS = 50;
+constexpr int DEFAULT_NUM_BINS = 15;
 constexpr int DEFAULT_NUM_CUT_BINS = 4;
 
 // Alternative to std::to_string that allows us to control the precision.
@@ -339,7 +339,7 @@ class STVPlotMaker {
         fTotalXSecAvg *= 1e-38;
       }
 
-
+/*
       if ( cat_index == 1 ) {
 //      CUT_TO_USE = "cc && STVs_ok && nf_p_above_threshold >= 1"; // all channels, no cuts, Npi
 //      CUT_TO_USE = "cc && STVs_ok && nf_p_above_threshold >= 1 && nf_pi_above_threshold == 1"; // all channels, no cuts, 1pi
@@ -382,6 +382,91 @@ class STVPlotMaker {
       HIST_LINE_STYLE = 8; // different dotted line
       fGenieTuneName = "Other CC <FSIs on>";
       }
+*/
+
+
+      if ( cat_index == 1 ) { // Total CC (FSIs on)
+//      CUT_TO_USE = "cc && STVs_ok && nf_p_above_threshold >= 1"; // all channels, no cuts, Npi
+//      CUT_TO_USE = "cc && STVs_ok && nf_p_above_threshold >= 1 && nf_pi_above_threshold == 1"; // all channels, no cuts, 1pi
+      CUT_TO_USE = "cc && STVs_ok && nf_p_above_threshold >= 1 && nf_pi_above_threshold == 0"; // all channels, no cuts, 0pi
+      HIST_LINE_STYLE = 1; // solid line
+      fGenieTuneName = Form( "%s", "a" );
+      }
+
+      if ( cat_index == 2 ) { // Total CC (FSIs off)
+//      CUT_TO_USE = "cc && STVs_ok && nf_p_above_threshold >= 1"; // all channels, no cuts, Npi
+//      CUT_TO_USE = "cc && STVs_ok && nf_p_above_threshold >= 1 && nf_pi_above_threshold == 1"; // all channels, no cuts, 1pi
+      CUT_TO_USE = "cc && STVs_ok && nf_p_above_threshold >= 1 && nf_pi_above_threshold == 0"; // all channels, no cuts, 0pi
+      HIST_LINE_STYLE = 2; // dotted line
+      fGenieTuneName = "b";
+      }
+
+      if ( cat_index == 3 ) { // CCQE (FSIs on)
+//      CUT_TO_USE = "cc && STVs_ok && nf_p_above_threshold >= 1 && cat == 1"; // QE, Npi
+//      CUT_TO_USE = "cc && STVs_ok && nf_p_above_threshold >= 1 && cat == 1 && nf_pi_above_threshold == 1"; // all channels, no cuts, 1pi
+      CUT_TO_USE = "cc && STVs_ok && nf_p_above_threshold >= 1 && cat == 1 && nf_pi_above_threshold == 0"; // QE, 0pi
+      HIST_LINE_STYLE = 9; // dashed line
+      fGenieTuneName = "c";
+      }
+
+      if ( cat_index == 4 ) { // CCMEC (FSIs on)
+//      CUT_TO_USE = "cc && STVs_ok && nf_p_above_threshold >= 1 && cat == 2"; // MEC, Npi
+//      CUT_TO_USE = "cc && STVs_ok && nf_p_above_threshold >= 1 && cat == 2 && nf_pi_above_threshold == 1"; // all channels, no cuts, 1pi
+      CUT_TO_USE = "cc && STVs_ok && nf_p_above_threshold >= 1 && cat == 2 && nf_pi_above_threshold == 0"; // MEC, 0pi
+      HIST_LINE_STYLE = 10; // dashed dotted line
+          if ( generator == "GiBUU" || generator == "NEUT" ) {
+          fGenieTuneName = "d2";
+          }
+          else fGenieTuneName = "d";
+      }
+
+      if ( cat_index == 5 ) { // CCRES (FSIs on)
+//      CUT_TO_USE = "cc && STVs_ok && nf_p_above_threshold >= 1 && cat == 3"; // Other channels, Npi
+//      CUT_TO_USE = "cc && STVs_ok && nf_p_above_threshold >= 1 && cat == 3 && nf_pi_above_threshold == 1"; // all channels, no cuts, 1pi
+      CUT_TO_USE = "cc && STVs_ok && nf_p_above_threshold >= 1 && cat == 3 && nf_pi_above_threshold == 0"; // Other channels, 0pi
+      HIST_LINE_STYLE = 8; // different dotted line
+      fGenieTuneName = "e";
+      }
+
+      if ( cat_index == 6 ) { // Other CC (FSIs on)
+//      CUT_TO_USE = "cc && STVs_ok && nf_p_above_threshold >= 1 && cat > 3"; // Other channels, Npi
+//      CUT_TO_USE = "cc && STVs_ok && nf_p_above_threshold >= 1 && cat > 3 && nf_pi_above_threshold == 1"; // all channels, no cuts, 1pi
+      CUT_TO_USE = "cc && STVs_ok && nf_p_above_threshold >= 1 && cat > 3 && nf_pi_above_threshold == 0"; // Other channels, 0pi
+      HIST_LINE_STYLE = 6; // different dotted line
+      fGenieTuneName = "h";
+      }
+
+
+
+/*
+      if ( cat_index == 6 ) { // CCDIS (FSIs on)
+      CUT_TO_USE = "cc && STVs_ok && nf_p_above_threshold >= 1 && cat == 4"; // Other channels, Npi
+//      CUT_TO_USE = "cc && STVs_ok && nf_p_above_threshold >= 1 && cat == 4 && nf_pi_above_threshold == 1"; // all channels, no cuts, 1pi
+//      CUT_TO_USE = "cc && STVs_ok && nf_p_above_threshold >= 1 && cat == 4 && nf_pi_above_threshold == 0"; // Other channels, 0pi
+      HIST_LINE_STYLE = 4; // different dotted line
+      fGenieTuneName = "f";
+      }
+*/
+
+/*
+      if ( cat_index == 7 ) { // CC COH (FSIs on)
+      CUT_TO_USE = "cc && STVs_ok && nf_p_above_threshold >= 1 && cat == 5"; // Other channels, Npi
+//      CUT_TO_USE = "cc && STVs_ok && nf_p_above_threshold >= 1 && cat == 5 && nf_pi_above_threshold == 1"; // all channels, no cuts, 1pi
+//      CUT_TO_USE = "cc && STVs_ok && nf_p_above_threshold >= 1 && cat == 5 && nf_pi_above_threshold == 0"; // Other channels, 0pi
+      HIST_LINE_STYLE = 6; // different dotted line
+      fGenieTuneName = "g";
+      }
+
+      if ( cat_index == 8 ) { // Other CC (FSIs on)
+      CUT_TO_USE = "cc && STVs_ok && nf_p_above_threshold >= 1 && cat == 6"; // Other channels, Npi
+//      CUT_TO_USE = "cc && STVs_ok && nf_p_above_threshold >= 1 && cat == 6 && nf_pi_above_threshold == 1"; // all channels, no cuts, 1pi
+//      CUT_TO_USE = "cc && STVs_ok && nf_p_above_threshold >= 1 && cat == 6 && nf_pi_above_threshold == 0"; // Other channels, 0pi
+      HIST_LINE_STYLE = 4; // different dotted line
+      fGenieTuneName = "h";
+      }
+*/
+
+
 
       if ( cat_index == 2 ) {
       legend_attr = "CC QE <FSIs on>";
@@ -591,6 +676,8 @@ class STVPlotMaker {
       hist.GetXaxis()->SetLabelSize( AXIS_LABEL_SIZE );
       hist.GetXaxis()->SetTitleSize( AXIS_TITLE_SIZE );
       hist.GetXaxis()->SetTitleOffset( X_AXIS_TITLE_OFFSET );
+      hist.GetXaxis()->CenterTitle(true);
+      hist.GetYaxis()->CenterTitle(true);
 
       hist.GetYaxis()->SetLabelSize( AXIS_LABEL_SIZE );
       hist.GetYaxis()->SetTitleSize( AXIS_TITLE_SIZE );
@@ -668,7 +755,7 @@ void STVPlotMaker::initialize_variable_info() {
     fVariableInfo = {
 
 
-
+/*
       { "mc_truth_mu_mom", VarInfo(0., 2.0, "mumom", "",
         "p^{truth}_{#mu} (GeV); d#sigma/p^{truth}_{#mu} (10^{-38} cm^{2} / ^{40}Ar / GeV)",
         "p^{truth}_{#mu}") },
@@ -748,24 +835,24 @@ void STVPlotMaker::initialize_variable_info() {
       { "mc_truth_leading_n_costheta", VarInfo(-1., 1., "cosptheta", "",
         "cos(#theta)^{truth}_{n} (GeV); d#sigma/cos(#theta)^{truth}_{p} (10^{-38} cm^{2} / ^{40}Ar / GeV)",
         "cos(#theta)^{truth}_{n}") },
-
+*/
 //      { "delta_p_T", VarInfo(0., 1.2, "pT", "d#sigma/#deltap_{T}",
       { "delta_p_T", VarInfo(0., 1.2, "pT", "",
-        "#deltap_{T} (GeV); d#sigma/#deltap_{T} (10^{-38} cm^{2} / ^{40}Ar / GeV)",
+        "#deltap_{T} (GeV); #LT #frac{d#sigma}{d#deltap_{T}}#GT_{flux} #left[ #frac{10^{-38} cm^{2}}{^{40}Ar}#right]",
         "#deltap_{T}") },
 
 //      { "delta_alpha_T", VarInfo(0., PI, "alphaT", "d#sigma/#delta#alpha_{T}",
       { "delta_alpha_T", VarInfo(0., PI, "alphaT", "",
-        "#delta#alpha_{T}; d#sigma/#delta#alpha_{T} (10^{-38} cm^{2} / ^{40}Ar)",
+        "#delta#alpha_{T}; #LT #frac{d#sigma}{d#delta#alpha_{T}}#GT_{flux} #left[ #frac{10^{-38} cm^{2}}{^{40}Ar}#right]",
         "#delta#alpha_{T}") },
 
 //      { "delta_phi_T", VarInfo(0., PI, "phiT", "d#sigma/#delta#phi_{T}",
       { "delta_phi_T", VarInfo(0., PI, "phiT", "",
-        "#delta#phi_{T}; d#sigma/#delta#phi_{T} (10^{-38} cm^{2} / ^{40}Ar)",
+        "#delta#phi_{T}; #LT #frac{d#sigma}{d#delta#phi_{T}}#GT_{flux} #left[ #frac{10^{-38} cm^{2}}{^{40}Ar}#right]",
         "#delta#phi_{T}") },
 
       { "delta_p_T_2p", VarInfo(0., 1.4, "pT_2p", "",
-        "#deltap_{T_{2p}} (GeV); d#sigma/#deltap_{T_{2p}} (10^{-38} cm^{2} / ^{40}Ar)",
+        "#deltap_{T_{2p}} (GeV); #LT #frac{d#sigma}{d#deltap_{T_{2p}}}#GT_{flux} #left[ #frac{10^{-38} cm^{2}}{^{40}Ar}#right]",
         "#deltap_{T_{2p}}") },
 
       { "delta_p_T_nN", VarInfo(0., 1.0, "pT_nN", "",
@@ -773,12 +860,13 @@ void STVPlotMaker::initialize_variable_info() {
         "#deltap_{T_{nN}}") },
 
       { "delta_p_L", VarInfo(0., 0.6, "pL", "",
-        "#deltap_{L} (GeV); d#sigma/#deltap_{L} (10^{-38} cm^{2} / ^{40}Ar / GeV)",
+        "#deltap_{L} (GeV); #LT #frac{d#sigma}{d#deltap_{L}}#GT_{flux} #left[ #frac{10^{-38} cm^{2}}{^{40}Ar}#right]",
         "#deltap_{L}") },
 
       { "delta_p", VarInfo(0., 1.3, "deltap", "",
-        "#deltap (GeV); d#sigma/#deltap (10^{-38} cm^{2} / ^{40}Ar / GeV)", "#deltap") },
-
+        "#deltap (GeV); #LT #frac{d#sigma}{d#deltap}#GT_{flux} #left[ #frac{10^{-38} cm^{2}}{^{40}Ar}#right]",
+        "#deltap") },
+/*
       { "delta_p_L_noE", VarInfo(0., 0.6, "pL_noE", "",
         "#deltap_{L_{noE}} (GeV); d#sigma/#deltap_{L_{noE}} (10^{-38} cm^{2} / ^{40}Ar / GeV)",
         "#deltap_{L_{noE}}") },
@@ -791,7 +879,7 @@ void STVPlotMaker::initialize_variable_info() {
 
       { "E_nu", VarInfo(0., 3.5, "E_nu", "",
         "E_{#nu} (GeV); d#sigma/E_{#nu} (10^{-38} cm^{2} / ^{40}Ar / GeV)", "E_{#nu}") }
-
+*/
     };
   }
   else if ( fPlotMode == STVPlotMode::FiducialEvents ) {
@@ -836,10 +924,10 @@ void make_plots( )
 {
 
 // Choose generator and corresponding files
-  const std::string input_filename( "input_GENIE_fsi.txt" );
+//  const std::string input_filename( "input_GENIE_fsi.txt" );
 //  const std::string input_filename( "input_NuWro_fsi.txt" );
-//  const std::string input_filename( "input_GiBUU_fsi.txt" );
-//  const std::string input_filename( "input_NEUT_fsi.txt" );
+//  const std::string input_filename( "input_GiBUU_fsi2.txt" );
+  const std::string input_filename( "input_NEUT_fsi.txt" );
 
   // Keys are GENIE tune names, values are vectors of histograms
   std::map< std::string, std::vector<TH1*> > plots_map;
@@ -876,13 +964,35 @@ void make_plots( )
 	plot_color = 1;
 	plot_legend = "total";
     }
-
+/*
     if ( cat_index == 2 ) plot_color = 15; // grey
     if ( cat_index == 3 ) plot_color = 2; // red
     if ( cat_index == 4 ) plot_color = 4; // blue
     if ( cat_index == 5 ) plot_color = 8; // green
+*/
+
+    if ( cat_index == 2 ) plot_color = 15; // FSIs off grey
+    if ( cat_index == 3 ) plot_color = kRed; // CCQE red
+    if ( cat_index == 4 ) plot_color = kAzure -2 ; // MEC blue
+    if ( cat_index == 5 ) plot_color = kGreen + 2; // RES green
+    if ( cat_index == 6 ) plot_color = kOrange; // (other) yellow
+//    if ( cat_index == 6 ) plot_color = kViolet + 2; // DIS violet
+
+    if ( cat_index == 7 ) plot_color = kOrange; // (COH) yellow
+    if ( cat_index == 8 ) plot_color = kOrange + 4; // Other brown
 
   }
+
+  // Make legend labels
+  std::string l1 = "Total CC (FSIs on)";
+  std::string l2 = "Total CC (FSIs off)";
+  std::string l3 = "CC QE (FSIs on)";
+  std::string l4 = "CC MEC (FSIs on)";
+  std::string l5 = "CC RES (FSIs on)";
+  std::string l6 = "CC DIS (FSIs on)";
+  std::string l7 = "CC COH (FSIs on)";
+  std::string l8 = "CC Other (mainly DIS, FSIs on)";
+  std::string l9 = "CC 2p-2h (FSIs on)";
 
   // The same number of histograms will be generated for all tunes, so we can
   // use this to figure out how many plots to make
@@ -936,7 +1046,7 @@ void make_plots( )
 
 //    TLegend* legend = new TLegend(0.60, 0.56, 0.86, 0.79); // TLegend position 1 (GiBUU and NEUT)
 //    TLegend* legend = new TLegend(0.60, 0.58, 0.88, 0.81); // TLegend position 1 (GENIE)
-    TLegend* legend = new TLegend(0.40, 0.65, 0.66, 0.89); // TLegend position 2 (for inlet)
+    TLegend* legend = new TLegend(0.40, 0.65, 0.86, 0.89); // TLegend position 2 (for inlet)
 //    TLegend* legend = new TLegend(0.37, 0.65, 0.63, 0.89); // TLegend position 2 (for inlet NuWro)
 
     legend->SetBorderSize( 0 );
@@ -951,6 +1061,20 @@ void make_plots( )
       std::string s = iter->first;
       std::replace( s.begin(), s.end(), '<', '(' );
       std::replace( s.begin(), s.end(), '>', ')' );
+
+      if ( s == "a" ) s.replace(s.begin(), s.end(), l1);
+      if ( s == "b" ) s.replace(s.begin(), s.end(), l2);
+      if ( s == "c" ) s.replace(s.begin(), s.end(), l3);
+      if ( s == "d" ) s.replace(s.begin(), s.end(), l4);
+      if ( s == "d2" ) s.replace(s.begin(), s.end(), l9);
+      if ( s == "e" ) s.replace(s.begin(), s.end(), l5);
+      if ( s == "f" ) s.replace(s.begin(), s.end(), l6);
+      if ( s == "g" ) s.replace(s.begin(), s.end(), l7);
+      if ( s == "h" ) s.replace(s.begin(), s.end(), l8);
+
+//      std::replace( s.begin(), s.end(), 'a', str2 );
+      std::replace( s.begin(), s.end(), '>', ')' );
+
       legend->AddEntry( hist, s.c_str(), "l" );
 //      legend->AddEntry( hist, iter->first.c_str(), "l" );
 //      legend->AddEntry( hist, plot_legend.c_str(), "l" );
@@ -965,15 +1089,15 @@ void make_plots( )
       }
 */
 
-///*
+/*
       if ( iter == plots_map.cbegin() ) hist->Draw("hist e");
       else hist->Draw("hist e same");
-//*/
+*/
 
-/*
+///*
       if ( iter == plots_map.cbegin() ) hist->Draw("hist c");
       else hist->Draw("hist c same");
-*/
+//*/
 
 
       int bin = hist->GetMaximumBin();
@@ -985,18 +1109,17 @@ void make_plots( )
       }
     }
 
-
     // Set the maximum y value to include the full range
     TH1* first_hist = plots_map.cbegin()->second.at(p);
     first_hist->GetYaxis()->SetRangeUser(0., /*y_max*1.02 */ y_max*1.12 );
     cout << "y_max " << y_max << endl;
-    first_hist->Draw("hist e same");
-//    first_hist->Draw("hist c same");
+//    first_hist->Draw("hist e same");
+    first_hist->Draw("hist c same");
 
     // Move the legend to the left-hand side if needed
     if ( max_bin > first_hist->GetNbinsX() / 2 ) {
       legend->SetX1( 0.15 );
-      legend->SetX2( 0.40 );
+      legend->SetX2( 0.50 );
 
       left = 1;
 
@@ -1008,8 +1131,36 @@ void make_plots( )
       }
     }
 
-    legend->Draw("same");
+//  std::stringstream sstm2;
+//  sstm2 << "Accumulated POT: " << pot;
+//  std::string str = sstm2.str();
 
+//  TLatex* pot_latex_2 = new TLatex(.13, .92, str.c_str());
+
+    TLatex* left_title; // = new TLatex(0.12, 0.92, "GENIE 3.0.6");
+    if ( generator_name == "GENIE" ) left_title = new TLatex(0.12, 0.92, "GENIE 3.0.6");
+    if ( generator_name == "NuWro" ) left_title = new TLatex(0.12, 0.92, "NuWro 19.02.1");
+    if ( generator_name == "GiBUU" ) left_title = new TLatex(0.12, 0.92, "GiBUU 2019");
+    if ( generator_name == "NEUT" ) left_title = new TLatex(0.12, 0.92, "NEUT 5.4.0");
+    left_title->SetTextFont(62);
+    left_title->SetTextColor(kGray+2);
+    left_title->SetNDC();
+    left_title->SetTextSize(1/25.);
+    left_title->SetTextAlign(10);//left adjusted
+    left_title->Draw();
+
+
+    TLatex* prelim = new TLatex(0.94,0.93, "MicroBooNE Preliminary");
+    prelim->SetTextFont(62);
+    prelim->SetTextColor(kGray+2);
+    prelim->SetNDC();
+    prelim->SetTextSize(1/30.);
+    prelim->SetTextAlign(32);
+    prelim->SetTextSize(0.04631579);
+//    prelim->Draw();
+
+    legend->Draw("same");
+/*
     gvname.SetTextSize(0.055);
     if ( generator_name == "GiBUU" && left == 0 ) {
 //    gvname.DrawLatex( x_max - 0.365*x_max , y_max - 0.09*y_max, ( generator_name + " 2019" ).c_str() ); // Position 1
@@ -1044,8 +1195,10 @@ void make_plots( )
     gvname.DrawLatex( 0. + 0.07*x_max , y_max - 0.06*y_max, ( generator_name + " 5.4.0" ).c_str() );
     }
 
+*/
+
 //    canvas->SaveAs( ("Plots/plot_" + generator_name + "_" + variable + "_" + CUT_TO_USE + ".pdf").c_str() );
-    canvas->SaveAs( ("Plots/" + generator_name + "/plot" + std::to_string(p) + ".jpg").c_str() );
+    canvas->SaveAs( ("Plots/" + generator_name + "/plot" + std::to_string(p) + ".png").c_str() );
 
     f1->cd();
     canvas->Write();
