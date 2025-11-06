@@ -232,8 +232,8 @@ void compute_var_GENIE(const std::string& input_file_name,
 
 
   // Loop over events
-  //for (int e = 0; e < gst->GetEntries(); ++e) {
-  for (int e = 0; e < 1e3; ++e) {
+  for (int e = 0; e < gst->GetEntries(); ++e) {
+  //for (int e = 0; e < 1e3; ++e) {
 
     std::cout << "\n\n";
     cout << "Event " << e << "                                                                    <- New event" << endl;
